@@ -1,0 +1,24 @@
+!pip install -q pyspark
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.master("local[*]").appName("spark-task").getOrCreate()
+sc = spark.sparkContext
+from pyspark.sql import Row
+df = spark.createDataFrame([Row(id=1, name="A", age=25, salary=1000, dept_id=111),
+                        Row(id=2, name="B", age=20, salary=15000, dept_id=222),
+                        Row(id=3, name="C", age=30, salary=2000, dept_id=111),
+                        Row(id=4, name="D", age=35, salary=35000, dept_id=222),
+                        Row(id=5, name="E", age=40, salary=3000, dept_id=333)])
+                        df.createOrReplaceTempView("employees")
+                        Employees = spark.sql("SELECT id, name, age, salary, dept_id FROM employees")
+                        Employees.show()
+                        df2 = spark.createDataFrame([Row(id=111,dep_name="DataAnalysis",location="Aswan"),
+                             Row(id=222,dep_name="DataEngineering",location="Awan"),
+                             Row(id=333,dep_name="AIEngineering",location="Awan")])
+                             df2.createOrReplaceTempView("departments")
+                             Departments = spark.sql("SELECT id, dep_name, location FROM departments")
+                             Departments.show()
+                             full = spark.sql("""SELECT employees.name, employees.age, employees.salary, departments.dep_name, departments.location
+FROM employees JOIN departments ON employees.dept_id = departments.id""").show()
+q3 = spark.sql("""SELECT employees.name, departments.dep_name
+FROM employees JOIN departments ON employees.dept_id = departments.id WHERE salary > 5000""").show()
+q4 = spark.sql("""SELECT name FROM employees WHERE (dept_id == 333) or (dept_id == 222)""").show()
